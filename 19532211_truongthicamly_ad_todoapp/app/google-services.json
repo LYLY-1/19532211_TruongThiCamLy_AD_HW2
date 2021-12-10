@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "854559864071",
-    "project_id": "todoapp-27d6c",
-    "storage_bucket": "todoapp-27d6c.appspot.com"
+    "project_number": "524157132272",
+    "project_id": "truongthicamlytodoapp",
+    "storage_bucket": "truongthicamlytodoapp.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:854559864071:android:12eadfd373ea7dfaa601a2",
+        "mobilesdk_app_id": "1:524157132272:android:82be88619c5d12b8cf1135",
         "android_client_info": {
           "package_name": "com.truongthicamly.a19532211_truongthicamly_ad_todoapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "854559864071-dcjc4m999pq56ol4obdvqcu303581kgr.apps.googleusercontent.com",
+          "client_id": "524157132272-aketfv2kgaenv09rm3gqe7uoi95u5p7d.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDYI_mhkY9Qt4NfMDV8TXphvcR0O7kgMRk"
+          "current_key": "AIzaSyAXJEbYAC-Cc4gKM6R1WZgr4i2wH-OaNBY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "854559864071-dcjc4m999pq56ol4obdvqcu303581kgr.apps.googleusercontent.com",
+              "client_id": "524157132272-aketfv2kgaenv09rm3gqe7uoi95u5p7d.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

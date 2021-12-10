@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name">MainActivity</string>
-    <string name="signin">SAVE</string>
-    <string name="cancel">CANCEL</string>
 </resources>

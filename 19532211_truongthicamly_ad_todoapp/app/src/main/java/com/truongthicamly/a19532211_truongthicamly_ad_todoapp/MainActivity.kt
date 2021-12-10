@@ -2,103 +2,93 @@ package com.truongthicamly.a19532211_truongthicamly_ad_todoapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.ListView
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
-import com.truongthicamly.a19532211_truongthicamly_ad_todoapp.adapter.RecycleAdapter
-import com.truongthicamly.a19532211_truongthicamly_ad_todoapp.model.User
-import com.truongthicamly.a19532211_truongthicamly_ad_todoapp.ui.FireMissilesDialogFragment
-import com.truongthicamly.a19532211_truongthicamly_ad_todoapp.ui.Post
-import kotlinx.android.synthetic.main.activity_main.*
-import androidx.recyclerview.widget.DividerItemDecoration
-
-import android.R.string.no
 
 
+class MainActivity : AppCompatActivity() , UpdateAndDelete {
+    lateinit var  database : DatabaseReference
+    var todoList : MutableList<ToDoModel>? = null
+    lateinit var adapter : ToDoAdapter
+    private var listViewItem : ListView? = null
 
-
-class MainActivity : AppCompatActivity() {
-    var data = ArrayList<User>()
-    lateinit var adapter: RecycleAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        btnAdd.setOnClickListener {
-            confirmFireMissiles()
+
+        val fab = findViewById<View>(R.id.fab) as FloatingActionButton
+        listViewItem = findViewById<ListView>(R.id.items_list)
+
+        database = FirebaseDatabase.getInstance().reference
+
+        fab.setOnClickListener{view ->
+            val alertDialog = AlertDialog.Builder(this)
+            val textEditText = EditText(this)
+            alertDialog.setTitle("Add New Task")
+            alertDialog.setView(textEditText)
+            alertDialog.setPositiveButton("Add"){ dialog, i ->
+                val todoItemData = ToDoModel.createList()
+                todoItemData.itemDataText = textEditText.text.toString()
+                todoItemData.done = false
+
+                val newItemData = database.child("todo").push()
+                todoItemData.UID = newItemData.key
+
+                newItemData.setValue(todoItemData)
+                dialog.dismiss()
+                Toast.makeText(this, "item saved" , Toast.LENGTH_LONG).show()
+            }
+            alertDialog.show()
         }
 
-        data = ArrayList<User>()
-        data.add(User("call mom","hello",1))
-        recycle_view.layoutManager = LinearLayoutManager(this)
-        val dividerItemDecoration = DividerItemDecoration(this,DividerItemDecoration.VERTICAL)
-        recycle_view.addItemDecoration(dividerItemDecoration)
-        getList()
-    }
-    fun confirmFireMissiles() {
-        val newFragment = FireMissilesDialogFragment()
-        newFragment.show(supportFragmentManager, "missiles")
-    }
 
-//    fun readDatabase(){
-//        val database = FirebaseDatabase.getInstance()
-//        var myRef = database.getReference("message")
-//
-//        myRef.addValueEventListener(object :ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val value = snapshot.value
-//                Log.d("Ly", "Value is: $value")
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.w("Ly", "Failed to read value.", error.toException())
-//            }
-//        })
-//    }
-//
-//    private fun addPostEventListener(postReference: DatabaseReference) {
-//        // [START post_value_event_listener]
-//        val postListener = object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                // Get Post object and use the values to update the UI
-//                val user: Post = dataSnapshot.getValue(Post::class.java) as Post
-//
-//                // ...
-//            }
-//
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                // Getting Post failed, log a message
-//                Log.w("Ly", "loadPost:onCancelled", databaseError.toException())
-//            }
-//        }
-//        postReference.addValueEventListener(postListener)
-//        // [END post_value_event_listener]
-//    }
-    fun getList(){
-        val  database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("list_users")
-
-        myRef.addValueEventListener(object :ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-        //        Log.w("Ly", "loadPost:onCancelled ${snapshot}")
-                for (postSnapshot in snapshot.children) {
-//                    Log.w("Ly", "loadPost:onCancelled ${snapshot.getValue(User::class.java)}")
-//                    val user: User? = snapshot.getValue(User::class.java)
-//                    if (user != null) {
-//                        Log.w("Ly", "loadPost:onCancelled ${user.id}")
-//                        data.add(user)
-//                    }
-
-
-                }
-                adapter = RecycleAdapter(data)
-                recycle_view.adapter = adapter
-                adapter.notifyDataSetChanged()
+        todoList = mutableListOf<ToDoModel>()
+        adapter = ToDoAdapter(this, todoList!!)
+        listViewItem!!.adapter = adapter
+        database.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(applicationContext , "No item Added" , Toast.LENGTH_LONG).show()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.w("Ly", "loadPost:onCancelled", error.toException())
+            override fun onDataChange(snapshot: DataSnapshot) {
+                todoList!!.clear()
+                addItemToList(snapshot)
             }
         })
+
+    }
+
+    private fun addItemToList(snapshot: DataSnapshot) {
+        val items = snapshot.children.iterator()
+        if(items.hasNext()){
+            val todoIndexdvalue = items.next()
+            val itemsIterator = todoIndexdvalue.children.iterator()
+            while(itemsIterator.hasNext()){
+                val currentItem = itemsIterator.next()
+                val todoItemData = ToDoModel.createList()
+                val map = currentItem.getValue() as HashMap<String , Any>
+                todoItemData.UID = currentItem.key
+                todoItemData.done = map.get("done") as Boolean?
+                todoItemData.itemDataText = map.get("itemDataText") as String?
+                todoList!!.add(todoItemData)
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun modifyItem(itemUID: String, isDone: Boolean) {
+        val itemReference = database.child("todo").child(itemUID)
+        itemReference.child("done").setValue(isDone)
+    }
+
+    override fun onItemDelete(itemUID: String) {
+        val itemReference = database.child("todo").child(itemUID)
+        itemReference.removeValue()
+        adapter.notifyDataSetChanged()
     }
 }

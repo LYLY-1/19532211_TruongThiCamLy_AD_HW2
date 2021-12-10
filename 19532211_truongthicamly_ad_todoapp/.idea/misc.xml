@@ -3,9 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Ly/19532211_TruongThiCamLy_KiemTra/demo1/19532211_truongthicamly_ad_todoapp/app/src/main/res/drawable/ic_baseline_add.xml" value="0.1484375" />
-        <entry key="..\:/Ly/19532211_TruongThiCamLy_KiemTra/demo1/19532211_truongthicamly_ad_todoapp/app/src/main/res/layout/activity_main.xml" value="0.24270833333333333" />
-        <entry key="..\:/Ly/19532211_TruongThiCamLy_KiemTra/demo1/19532211_truongthicamly_ad_todoapp/app/src/main/res/layout/dialog_add.xml" value="0.1171875" />
+        <entry key="..\:/Ly/19532211_TruongThiCamLy_KiemTra/demo2/19532211_truongthicamly_ad_todoapp/app/src/main/res/layout/activity_main.xml" value="0.24270833333333333" />
+        <entry key="..\:/Ly/19532211_TruongThiCamLy_KiemTra/demo2/19532211_truongthicamly_ad_todoapp/app/src/main/res/layout/row_items.xml" value="0.25" />
       </map>
     </option>
   </component>
